@@ -1,9 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using Nancy.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ArsShina_Bot.Http
 {
@@ -17,7 +19,7 @@ namespace ArsShina_Bot.Http
 
         }
 
-        public static async void Send(string ctr, string act, string data=null)
+        public static async Task<string> Send(string ctr, string act, string data=null)
         {
             try
             {
@@ -26,9 +28,12 @@ namespace ArsShina_Bot.Http
                 if (data != null)
                 {
                     Trace.WriteLine("POST " + data);
-                    StringContent stringContent = new StringContent(data);
-                    HttpResponseMessage request = await client.PostAsync(constr, stringContent);
-                    Trace.WriteLine(request);
+                    var poststr = data.Trim('/');
+                    StringContent stringContent = new StringContent(poststr);
+                    HttpResponseMessage request = await client.PostAsync(constr, new StringContent(new JavaScriptSerializer().Serialize(data), Encoding.UTF8, "application/json"));
+                    var ddd = request.Content.ReadAsStringAsync().Result;
+                    Trace.WriteLine(ddd);
+                    return request.Content.ReadAsStringAsync().Result;
                 }
                 else
                 {
@@ -37,14 +42,15 @@ namespace ArsShina_Bot.Http
                     Trace.WriteLine("POST  " + response);
                     string responseBody = await response.Content.ReadAsStringAsync();
                     Trace.WriteLine("RESPONSE" + responseBody.ToString());
-                    //ParsData(ctr, window, responseBody);
+                    return responseBody;
                 }
+                return "";
 
             }
             catch (Exception e)
             {
                 Trace.WriteLine(e.ToString());
-                //MessageBox.Show("Не удается подключится к серверу");
+                return "Не удается подключится к серверу";
             }
         }
     }
