@@ -1,6 +1,8 @@
 ﻿using ArsShina_Bot.Http;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -8,6 +10,7 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.InputFiles;
 
 namespace ArsShina_Bot
 {
@@ -39,6 +42,7 @@ namespace ArsShina_Bot
                     await botClient.SendTextMessageAsync(message.Chat, "Привет " + update.Message.From.FirstName);
                     await botClient.SendTextMessageAsync(message.Chat, "Добро пожаловать на сайт АвтоРесурс Сервис!");
                     await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
+                    await botClient.SendTextMessageAsync(message.Chat, "Для просмотра всех комманд используйте /help");
                     Http.User user = new Http.User(update.Message.From.FirstName, update.Message.From.LastName);
                     var senddata = JsonConvert.SerializeObject(user);
                     string str = Post.Send("Users", "SaveTelegramUser", senddata).Result;
@@ -47,6 +51,36 @@ namespace ArsShina_Bot
                 if (message.Text.ToLower() == "ги")
                 {
                     await botClient.SendTextMessageAsync(message.Chat, "Луцк привет!!");
+                }
+
+
+                if(message.Text.ToLower() == "/help")
+                {
+                    await botClient.SendTextMessageAsync(message.Chat, "Список комманд");
+                    await botClient.SendTextMessageAsync(message.Chat, "/start - запуск \n /help = помощь \n /showalltires - показать все товары на сайте");
+                    return;
+
+                }
+
+                if(message.Text.ToLower() == "/showalltires")
+                {
+                    var str = Post.Send("Tires", "GetAllTires").Result;
+                    List<Tires> elem = JsonConvert.DeserializeObject<List<Tires>>(str);
+                    for (int i = 0; i < elem.Count; i++)
+                    {
+                        await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Name);
+                        await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Width);
+                        await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Height);
+                        
+                        var pic = Post.Send("Tires", "GetTiresImage", "/" + elem[i].Name + "/" + elem[i].TypeOfTire ).Result;
+                        TiresImages tiresImages = JsonConvert.DeserializeObject<TiresImages>(pic);
+
+                        MemoryStream ms = new MemoryStream(tiresImages.Image);
+                        InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
+                        await botClient.SendPhotoAsync(message.Chat, inputOnlineFile);
+                    }
+                    return;
+
                 }
                 if (message.Text.ToLower() == "да" || message.Text.ToLower() == "так")
                 {
