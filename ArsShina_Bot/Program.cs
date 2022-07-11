@@ -17,7 +17,7 @@ namespace ArsShina_Bot
     class Program
     {
         
-        static ITelegramBotClient bot = new TelegramBotClient("5520950526:AAFnQh_ejXv-SztIkbnTihawdwARWhwJ_Lg");
+        static ITelegramBotClient bot = new TelegramBotClient("5520950526:AAGSxweLlc9RGMxO94IG9_siV2tHxoTXEiI");
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
             // Некоторые действия
@@ -66,13 +66,14 @@ namespace ArsShina_Bot
                 {
                     var str = Post.Send("Tires", "GetAllTires").Result;
                     List<Tires> elem = JsonConvert.DeserializeObject<List<Tires>>(str);
+                    Console.WriteLine(elem);
                     for (int i = 0; i < elem.Count; i++)
                     {
                         await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Name);
                         await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Width);
                         await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Height);
-                        
-                        var pic = Post.Send("Tires", "GetTiresImage", "/" + elem[i].Name + "/" + elem[i].TypeOfTire ).Result;
+
+                        var pic = Post.Send("Tires", "GetTiresImage", "/" + elem[i].Name + "/" + elem[i].TypeOfTire).Result;
                         TiresImages tiresImages = JsonConvert.DeserializeObject<TiresImages>(pic);
 
                         MemoryStream ms = new MemoryStream(tiresImages.Image);
@@ -88,6 +89,7 @@ namespace ArsShina_Bot
                     if (str != "")
                     {
                         string[] brends = JsonConvert.DeserializeObject<string[]>(str);
+                        Console.WriteLine(str);
                         for (int i = 0; i < brends.Length; i++)
                         {
                             await botClient.SendTextMessageAsync(message.Chat, "/" + brends[i]);
@@ -117,6 +119,17 @@ namespace ArsShina_Bot
         {
             // Некоторые действия
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
+            var cts = new CancellationTokenSource();
+            var receiverOptions = new ReceiverOptions
+            {
+                AllowedUpdates = { }, // receive all update types
+            };
+            bot.StartReceiving(
+                HandleUpdateAsync,
+                HandleErrorAsync,
+                receiverOptions,
+                cancellationToken
+            );
         }
         static void Main(string[] args)
         {
