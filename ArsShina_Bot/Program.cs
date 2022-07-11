@@ -33,7 +33,7 @@ namespace ArsShina_Bot
                 }
             }
             fileStreamLog.Close();
-
+            
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
                 var message = update.Message;
@@ -69,16 +69,17 @@ namespace ArsShina_Bot
                     Console.WriteLine(elem);
                     for (int i = 0; i < elem.Count; i++)
                     {
-                        await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Name);
-                        await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Width);
-                        await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Height);
-
                         var pic = Post.Send("Tires", "GetTiresImage", "/" + elem[i].Name + "/" + elem[i].TypeOfTire).Result;
                         TiresImages tiresImages = JsonConvert.DeserializeObject<TiresImages>(pic);
 
                         MemoryStream ms = new MemoryStream(tiresImages.Image);
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
-                        await botClient.SendPhotoAsync(message.Chat, inputOnlineFile);
+                        await botClient.SendPhotoAsync(message.Chat, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height+"\n" + "Ціна: " + elem[i].Price+"ГРН");
+                        //await botClient.SendTextMessageAsync(message.Chat, "Назва " + elem[i].Name+" /n" +"Вага " + elem[i].Width+ " /n" + "Висота "+elem[i].Height+ " /n");
+                        //await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Width);
+                        //await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Height);
+                      
+                        
                     }
                     return;
 
@@ -114,6 +115,7 @@ namespace ArsShina_Bot
                 }
             }
         }
+
 
         public static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
