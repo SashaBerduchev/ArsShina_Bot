@@ -12,6 +12,6 @@ namespace ArsShina_Bot.Http
         public string Articul { get; set; }
         public string TypeSeason { get; set; }
         public string ImageMimeTypeOfData { get; set; }
-        public byte[] Image { get; set; }
+        public byte[] Image { get; set; } 
     }
 }
