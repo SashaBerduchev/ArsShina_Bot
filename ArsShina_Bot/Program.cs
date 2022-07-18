@@ -78,7 +78,7 @@ namespace ArsShina_Bot
                     //if (User.Email != "" && User.Password == "" && registarEnd == false)
                     //{
                     //    registarEnd = true;
-                        
+
                     //    return;
                     //}
 
@@ -87,11 +87,12 @@ namespace ArsShina_Bot
                         User.Password = message.Text;
                         if (User.Name != "" && User.Sername != "" && User.Password != "" && User.Email != "")
                         {
+                            //User.Id = Convert.ToInt32(message.From.Id);
                             var senddata = JsonConvert.SerializeObject(User);
                             var sendresult = Post.Send("Users", "SaveTelegramUser", senddata).Result;
                             registarStart = false;
                             registarEnd = false;
-                            if(sendresult == "Good")
+                            if (sendresult == "Good")
                             {
                                 await botClient.SendTextMessageAsync(message.Chat, "Ви зареєстровані!");
                                 return;

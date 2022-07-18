@@ -13,6 +13,7 @@ namespace ArsShina_Bot.Http
             this.Email = Email;
             this.Password = Password;
         }
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Sername { get; set; }
         public string Email { get; set; }
