@@ -42,10 +42,10 @@ namespace ArsShina_Bot
                 var message = update.Message;
                 if (message.Text.ToLower() == "/start")
                 {
-                    await botClient.SendTextMessageAsync(message.Chat, "Привіт " + update.Message.From.FirstName);
-                    await botClient.SendTextMessageAsync(message.Chat, "Вас вітає АвтоРесурс Сервис!");
+                    await botClient.SendTextMessageAsync(message.Chat, "Привіт " + update.Message.From.FirstName + " " + message.From.LastName);
+                    await botClient.SendTextMessageAsync(message.Chat, "Вас вітає Авто Ресурс Сервис!");
                     //await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
-                    await botClient.SendTextMessageAsync(message.Chat, "Для просмотра всех комманд используйте /help");
+                    await botClient.SendTextMessageAsync(message.Chat, "Для перегляду усіх команд викоистовуйте: /help");
                     //Http.User user = new Http.User(update.Message.From.FirstName, update.Message.From.LastName);
 
                     //string str = Post.Send("Users", "SaveTelegramUser", senddata).Result;
@@ -111,7 +111,7 @@ namespace ArsShina_Bot
                 if (message.Text.ToLower() == "/help")
                 {
                     await botClient.SendTextMessageAsync(message.Chat, "Список комманд");
-                    await botClient.SendTextMessageAsync(message.Chat, "/start - запуск \n /help = помощь \n /showalltires - показать все товары на сайте \n /registration - регістрація");
+                    await botClient.SendTextMessageAsync(message.Chat, "/start - запуск \n /help - допомога \n /showalltires - показати усі товари на сайті \n /registration - регістрація");
                     return;
 
                 }
