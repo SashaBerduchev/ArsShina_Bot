@@ -50,6 +50,10 @@ namespace ArsShina_Bot
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
                 var message = update.Message;
+                if (message.Text == null)
+                {
+                    return;
+                }
                 if (message.Text.ToLower() == "/start")
                 {
                     await botClient.SendTextMessageAsync(message.Chat, "Привіт " + update.Message.From.FirstName + " " + message.From.LastName);
@@ -228,12 +232,38 @@ namespace ArsShina_Bot
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Село і квіти за вікном");
                     }
                 }
+
+                SendNews();
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine(exp.ToString());
+            }
+
+            Console.ReadLine();
+        }
+
+        public static async void SendNews()
+        {
+            try
+            {
+                var result = Post.Send("Home", "GetBotUser").Result;
+                List<TelegramBotUser> telegramBotUsers = JsonConvert.DeserializeObject<List<TelegramBotUser>>(result);
+                for (int i = 0; i < telegramBotUsers.Count; i++)
+                {
+                    string data = Post.Send("News", "GetNowNewsForBot").Result;
+                    List<News> news = JsonConvert.DeserializeObject<List<News>>(data);
+                    for (int j = 0; j < news.Count; j++)
+                    {
+                        MemoryStream ms = new MemoryStream(news[j].Image);
+                        InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, news[j].ImageMimeTypeOfData);
+                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + news[j].BaseInfo + "\n\n" + news[j].NewsLinkSrc);
+                    }
+                }
             }catch(Exception exp)
             {
                 Console.WriteLine(exp.ToString());
             }
-            
-            Console.ReadLine();
         }
     }
 }
