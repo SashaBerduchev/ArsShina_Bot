@@ -7,7 +7,7 @@ namespace ArsShina_Bot
     class Config
     {
         private static string connstring;
-        public static bool DEBUG_MODE = false;
+        public static bool DEBUG_MODE = true;
         public static string GetString()
         {
             if (DEBUG_MODE == true)
