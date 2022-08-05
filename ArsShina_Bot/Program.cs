@@ -23,7 +23,7 @@ namespace ArsShina_Bot
         static bool registarEnd = false;
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            
+
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(update));
             var logString = Newtonsoft.Json.JsonConvert.SerializeObject(update);
             FileStream fileStreamLog = new FileStream(@"BotFile.log", FileMode.Append);
@@ -43,10 +43,10 @@ namespace ArsShina_Bot
             telegramBotUser.Login = update.Message.Chat.Username;
             var sendTelegramUser = JsonConvert.SerializeObject(telegramBotUser);
             Post.Send("Home", "SetBotUser", sendTelegramUser);
-            
+
             //await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
 
-            
+
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
             {
                 var message = update.Message;
@@ -222,6 +222,11 @@ namespace ArsShina_Bot
                 for (int i = 0; i < telegramBotUsers.Count; i++)
                 {
                     bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хочете побачити нові колекції вантажних шин?");
+                    if (telegramBotUsers[i].Login == "Dotnetsqlkukhar")
+                    {
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Button тьфу");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Село і квіти за вікном");
+                    }
                 }
             }catch(Exception exp)
             {
