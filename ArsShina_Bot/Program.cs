@@ -257,7 +257,7 @@ namespace ArsShina_Bot
                     {
                         MemoryStream ms = new MemoryStream(news[j].Image);
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, news[j].ImageMimeTypeOfData);
-                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + news[j].BaseInfo + "\n\n" + news[j].NewsLinkSrc);
+                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + news[j].BaseInfo.Substring(0, 350) + "\n\n" + news[j].NewsLinkSrc);
                     }
                 }
             }catch(Exception exp)
