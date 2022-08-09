@@ -240,7 +240,15 @@ namespace ArsShina_Bot
                 Console.WriteLine(exp.ToString());
             }
 
+
+            while (Console.ReadKey().Key == ConsoleKey.Spacebar)
+            {
+                {
+                    SendNews();
+                }
+            }
             Console.ReadLine();
+
         }
 
         public static async void SendNews()
@@ -265,5 +273,7 @@ namespace ArsShina_Bot
                 Console.WriteLine(exp.ToString());
             }
         }
+
+
     }
 }
