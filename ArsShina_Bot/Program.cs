@@ -263,9 +263,18 @@ namespace ArsShina_Bot
                     List<News> news = JsonConvert.DeserializeObject<List<News>>(data);
                     for (int j = 0; j < news.Count; j++)
                     {
+                        string returnBase = "";
                         MemoryStream ms = new MemoryStream(news[j].Image);
+                        if (news[j].BaseInfo.Length >= 350)
+                        {
+                            returnBase = news[j].BaseInfo.Substring(0, 350);
+                        }
+                        else
+                        {
+                            returnBase = news[j].BaseInfo;
+                        }
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, news[j].ImageMimeTypeOfData);
-                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + news[j].BaseInfo.Substring(0, 350) + "\n\n" + news[j].NewsLinkSrc);
+                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase + "\n\n" + news[j].NewsLinkSrc);
                     }
                 }
             }catch(Exception exp)
