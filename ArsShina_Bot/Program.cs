@@ -11,6 +11,7 @@ using Telegram.Bot;
 using Telegram.Bot.Extensions.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace ArsShina_Bot
 {
@@ -36,14 +37,15 @@ namespace ArsShina_Bot
                 }
             }
             fileStreamLog.Close();
-
-            TelegramBotUser telegramBotUser = new TelegramBotUser();
-            telegramBotUser.idChat = update.Message.Chat.Id;
-            telegramBotUser.Name = update.Message.Chat.FirstName;
-            telegramBotUser.Login = update.Message.Chat.Username;
-            var sendTelegramUser = JsonConvert.SerializeObject(telegramBotUser);
-            Post.Send("Home", "SetBotUser", sendTelegramUser);
-
+            if (update.Message != null)
+            {
+                TelegramBotUser telegramBotUser = new TelegramBotUser();
+                telegramBotUser.idChat = update.Message.Chat.Id;
+                telegramBotUser.Name = update.Message.Chat.FirstName;
+                telegramBotUser.Login = update.Message.Chat.Username;
+                var sendTelegramUser = JsonConvert.SerializeObject(telegramBotUser);
+                Post.Send("Home", "SetBotUser", sendTelegramUser);
+            }
             //await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
 
 
@@ -218,6 +220,7 @@ namespace ArsShina_Bot
                 HandleErrorAsync,
                 receiverOptions,
                 cancellationToken
+
             );
             try
             {
@@ -225,7 +228,19 @@ namespace ArsShina_Bot
                 List<TelegramBotUser> telegramBotUsers = JsonConvert.DeserializeObject<List<TelegramBotUser>>(result);
                 for (int i = 0; i < telegramBotUsers.Count; i++)
                 {
-                    bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хочете побачити нові колекції вантажних шин?");
+                    var inlineKeyboard = new InlineKeyboardMarkup(new[]
+                    {
+                        // first row
+                        new []
+                        {
+                            InlineKeyboardButton.WithCallbackData("Так", "Yes")
+                            //InlineKeyboardButton.WithCallbackData("1.2", "12"),
+                        },
+                        // second row
+                        
+                    });
+
+                    bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хочете побачити нові колекції вантажних шин?", replyMarkup: inlineKeyboard);
                     if (telegramBotUsers[i].Login == "Dotnetsqlkukhar")
                     {
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Button тьфу");
@@ -233,7 +248,6 @@ namespace ArsShina_Bot
                     }
                 }
 
-                SendNews();
             }
             catch (Exception exp)
             {
@@ -241,7 +255,7 @@ namespace ArsShina_Bot
             }
 
 
-            while (Console.ReadKey().Key == ConsoleKey.Spacebar)
+            while (Console.ReadKey().Key == ConsoleKey.Enter)
             {
                 {
                     SendNews();
@@ -274,10 +288,27 @@ namespace ArsShina_Bot
                             returnBase = news[j].BaseInfo;
                         }
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, news[j].ImageMimeTypeOfData);
-                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase + "\n\n" + news[j].NewsLinkSrc);
+
+                        var inlineKeyboard = new InlineKeyboardMarkup(new[]
+                    {
+                        // first row
+                        new []
+                        {
+                            InlineKeyboardButton.WithCallbackData("1.1", "11"),
+                            InlineKeyboardButton.WithCallbackData("1.2", "12"),
+                        },
+                        // second row
+                        new []
+                        {
+                            InlineKeyboardButton.WithCallbackData("2.1", "21"),
+                            InlineKeyboardButton.WithCallbackData("2.2", "22"),
+                        }
+                    });
+                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase + "\n\n" + news[j].NewsLinkSrc, replyMarkup: inlineKeyboard);
                     }
                 }
-            }catch(Exception exp)
+            }
+            catch (Exception exp)
             {
                 Console.WriteLine(exp.ToString());
             }
