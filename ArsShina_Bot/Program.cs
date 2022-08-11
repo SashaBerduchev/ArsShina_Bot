@@ -33,7 +33,17 @@ namespace ArsShina_Bot
                 Trace.WriteLine(callbackQuery.Data);
                 if (callbackQuery.Data == "NotShowTires")
                 {
-                    bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "До зустрічі!");
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
+                    {
+                        // first row
+                        new []
+                        {
+                            InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires")
+                        },
+                        // second row
+                        
+                    });
+                    bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Тоді виберіть за фільтром!", replyMarkup: inlineKeyboard);
                 }
                 else if (callbackQuery.Data == "YesShowTires")
                 {
@@ -50,7 +60,28 @@ namespace ArsShina_Bot
                         await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН");
                     }
                 }
+                if (callbackQuery.Data == "YesShowFilterTires")
+                {
+                    string str = Post.Send("Tires", "GetBotTires").Result;
+                    if (str != "")
+                    {
+                        string[] brends = JsonConvert.DeserializeObject<string[]>(str);
+                        Console.WriteLine(str);
+                        InlineKeyboardButton[][] inlineKeyboardBtns = new InlineKeyboardButton[20][];
 
+                        for (int i = 0; i < brends.Length; i++)
+                        {
+                            InlineKeyboardButton[] elm = new[] { InlineKeyboardButton.WithCallbackData(brends[i].ToString(), brends[i].ToString()) };
+                            inlineKeyboardBtns[i] = elm;
+                        }
+
+                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(inlineKeyboardBtns);
+
+
+                        await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Виберіть бренд", replyMarkup: inlineKeyboard);
+                        return;
+                    }
+                }
                 Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(update));
                 var logString = Newtonsoft.Json.JsonConvert.SerializeObject(update);
                 FileStream fileStreamLog = new FileStream(@"BotFile.log", FileMode.Append);
@@ -253,7 +284,7 @@ namespace ArsShina_Bot
 
             );
 
-            
+
 
             try
             {
@@ -359,8 +390,8 @@ namespace ArsShina_Bot
             }
         }
     }
-        //private async void BotOnCallbackQueryReceived(object sender, ApiResponseEventArgs req)
-        //{
+    //private async void BotOnCallbackQueryReceived(object sender, ApiResponseEventArgs req)
+    //{
 
-        //}
+    //}
 }
