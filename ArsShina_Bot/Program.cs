@@ -71,7 +71,7 @@ namespace ArsShina_Bot
                             btn[i] = InlineKeyboardButton.WithCallbackData(brends[i], brends[i]);
                         }
                         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
-                        bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Тоді виберіть за фільтром!");
+                        //bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Тоді виберіть за фільтром!");
 
                         await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Виберіть бренд", replyMarkup: inlineKeyboard);
                         return;
