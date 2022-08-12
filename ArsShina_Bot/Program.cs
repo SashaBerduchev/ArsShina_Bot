@@ -33,16 +33,8 @@ namespace ArsShina_Bot
                 Trace.WriteLine(callbackQuery.Data);
                 if (callbackQuery.Data == "NotShowTires")
                 {
-                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]
-                    {
-                        // first row
-                        new []
-                        {
-                            InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires")
-                        },
-                        // second row
-                        
-                    });
+                    InlineKeyboardButton[] btn = new[] { InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires")};
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]{btn});
                     bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Тоді виберіть за фільтром!", replyMarkup: inlineKeyboard);
                 }
                 else if (callbackQuery.Data == "YesShowTires")
@@ -67,16 +59,19 @@ namespace ArsShina_Bot
                     {
                         string[] brends = JsonConvert.DeserializeObject<string[]>(str);
                         Console.WriteLine(str);
-                        InlineKeyboardButton[][] inlineKeyboardBtns = new InlineKeyboardButton[20][];
-
+                        //var btn = new[] {
+                        //    for (int i = 0; i < brends.Length; i++)
+                        //    {
+                        //        InlineKeyboardButton.WithCallbackData(brends[i], brends[i]);
+                        //    }
+                        //};
+                        InlineKeyboardButton[] btn = new InlineKeyboardButton[brends.Length];
                         for (int i = 0; i < brends.Length; i++)
                         {
-                            InlineKeyboardButton[] elm = new[] { InlineKeyboardButton.WithCallbackData(brends[i].ToString(), brends[i].ToString()) };
-                            inlineKeyboardBtns[i] = elm;
+                            btn[i] = InlineKeyboardButton.WithCallbackData(brends[i], brends[i]);
                         }
-
-                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(inlineKeyboardBtns);
-
+                        InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
+                        bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Тоді виберіть за фільтром!");
 
                         await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Виберіть бренд", replyMarkup: inlineKeyboard);
                         return;
