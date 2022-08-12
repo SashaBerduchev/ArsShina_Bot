@@ -299,7 +299,7 @@ namespace ArsShina_Bot
                         
                     });
 
-                    bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хочете побачити нові колекції вантажних шин?", replyMarkup: inlineKeyboard);
+                    bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хочете побачити нові колекції вантажних шин?" + " " +"@"+ telegramBotUsers[i].Login, replyMarkup: inlineKeyboard);
                     if (telegramBotUsers[i].Login == "Dotnetsqlkukhar")
                     {
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Button тьфу");
