@@ -80,7 +80,7 @@ namespace ArsShina_Bot
                         }
                         InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
                         //bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Тоді виберіть за фільтром!");
-
+                        IsSelectTire = true;
                         await botClient.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Виберіть бренд", replyMarkup: inlineKeyboard);
                         return;
                     }
@@ -153,12 +153,20 @@ namespace ArsShina_Bot
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
                         await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН");
                     }
-                    InlineKeyboardButton[] btn = new InlineKeyboardButton[0];
-                    btn[0] = InlineKeyboardButton.WithCallbackData("Хочете підібрати інші шини", "YesShowFilterTires");
+                    InlineKeyboardButton[] btn = new InlineKeyboardButton[2];
+                    btn[0] = InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires");
+                    btn[1] = InlineKeyboardButton.WithCallbackData("Ні", "NoTires");
                     InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
                     bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Хочете побачити іще шини?", replyMarkup: inlineKeyboard);
-                    
 
+                    brend = null;
+                    width = null;
+                    haighttire = null;
+                    rad = null;
+                }
+                if(callbackQuery.Data == "NoTires")
+                {
+                    bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Дякую");
                 }
             }
 
