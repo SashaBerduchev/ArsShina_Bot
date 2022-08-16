@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ArsShina_Bot.Http
 {
-    class Tire
+    public class Tire
     {
         public static string Name { get; set; }
         public static string Width { get; set; }

@@ -23,6 +23,12 @@ namespace ArsShina_Bot
         static Http.User User;
         static bool registarStart = false;
         static bool registarEnd = false;
+        static bool IsSelectTire = false;
+        static Tire tires;
+        static string brend;
+        static string width;
+        static string haighttire;
+        static string rad;
         public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
 
@@ -31,11 +37,13 @@ namespace ArsShina_Bot
                 CallbackQuery callbackQuery = update.CallbackQuery;
                 Trace.WriteLine(callbackQuery);
                 Trace.WriteLine(callbackQuery.Data);
+
                 if (callbackQuery.Data == "NotShowTires")
                 {
-                    InlineKeyboardButton[] btn = new[] { InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires")};
-                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[]{btn});
+                    InlineKeyboardButton[] btn = new[] { InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires") };
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
                     bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Тоді виберіть за фільтром!", replyMarkup: inlineKeyboard);
+                    IsSelectTire = true;
                 }
                 else if (callbackQuery.Data == "YesShowTires")
                 {
@@ -77,167 +85,243 @@ namespace ArsShina_Bot
                         return;
                     }
                 }
-                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(update));
-                var logString = Newtonsoft.Json.JsonConvert.SerializeObject(update);
-                FileStream fileStreamLog = new FileStream(@"BotFile.log", FileMode.Append);
-                if (update != null)
+
+                if (IsSelectTire == true && callbackQuery.Data != "NotShowTires" && brend == null)
                 {
-                    for (int i = 0; i < logString.Length; i++)
+                    brend = callbackQuery.Data;
+                    string response = Post.Send("Tires", "GetBotWidth", brend).Result;
+                    string[] width = JsonConvert.DeserializeObject<string[]>(response);
+                    InlineKeyboardButton[] btn = new InlineKeyboardButton[width.Length];
+                    for (int i = 0; i < width.Length; i++)
                     {
-                        byte[] array = Encoding.Default.GetBytes(logString.ToString());
-                        fileStreamLog.Write(array, 0, array.Length);
+                        btn[i] = InlineKeyboardButton.WithCallbackData(width[i], width[i]);
                     }
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
+                    bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Виберіть ширину", replyMarkup: inlineKeyboard);
                 }
-                fileStreamLog.Close();
-                if (update.Message != null)
+                else if (IsSelectTire == true && callbackQuery.Data != "NotShowTires" && brend != null && brend != "" && width == null)
                 {
-                    TelegramBotUser telegramBotUser = new TelegramBotUser();
-                    telegramBotUser.idChat = update.Message.Chat.Id;
-                    telegramBotUser.Name = update.Message.Chat.FirstName;
-                    telegramBotUser.Login = update.Message.Chat.Username;
-                    var sendTelegramUser = JsonConvert.SerializeObject(telegramBotUser);
-                    Post.Send("Home", "SetBotUser", sendTelegramUser);
+                    Tires tires = new Tires();
+                    tires.Name = brend;
+                    width = callbackQuery.Data;
+                    tires.Width = Convert.ToInt64(width);
+                    string response = Post.Send("Tires", "GetBotHeight", JsonConvert.SerializeObject(tires)).Result;
+                    string[] height = JsonConvert.DeserializeObject<string[]>(response);
+                    InlineKeyboardButton[] btn = new InlineKeyboardButton[height.Length];
+                    for (int i = 0; i < height.Length; i++)
+                    {
+                        btn[i] = InlineKeyboardButton.WithCallbackData(height[i], height[i]);
+                    }
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
+                    bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Виберіть висоту", replyMarkup: inlineKeyboard);
                 }
-                //await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
-
-
-                if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
+                else if (IsSelectTire == true && callbackQuery.Data != "NotShowTires" && brend != null && brend != "" && width != null && width != "" && haighttire == null)
                 {
-                    var message = update.Message;
-                    if (message.Text == null)
+                    Tires tires = new Tires();
+                    tires.Name = brend;
+                    haighttire = callbackQuery.Data;
+                    tires.Width = Convert.ToInt64(width);
+                    tires.Height = Convert.ToInt64(haighttire);
+                    string response = Post.Send("Tires", "GetBotRadius", JsonConvert.SerializeObject(tires)).Result;
+                    string[] height = JsonConvert.DeserializeObject<string[]>(response);
+                    InlineKeyboardButton[] btn = new InlineKeyboardButton[height.Length];
+                    for (int i = 0; i < height.Length; i++)
                     {
-                        return;
+                        btn[i] = InlineKeyboardButton.WithCallbackData(height[i], height[i]);
                     }
-                    if (message.Text.ToLower() == "/start")
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
+                    bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Виберіть радіус", replyMarkup: inlineKeyboard);
+                }
+                else if (IsSelectTire == true && brend != null && width != null && haighttire != null)
+                {
+                    IsSelectTire = false;
+                    rad = callbackQuery.Data;
+                    Tires tires = new Tires(); ;
+                    tires.Name = brend;
+                    tires.Width = Convert.ToInt64(width);
+                    tires.Height = Convert.ToInt64(haighttire);
+                    tires.Radius = rad;
+                    var data = Post.Send("Tires", "GetFilterTire", JsonConvert.SerializeObject(tires)).Result; ;
+                    List<Tires> elem = JsonConvert.DeserializeObject<List<Tires>>(data);
+                    Console.WriteLine(elem);
+                    for (int i = 0; i < elem.Count; i++)
                     {
-                        await botClient.SendTextMessageAsync(message.Chat, "Привіт " + update.Message.From.FirstName + " " + message.From.LastName);
-                        await botClient.SendTextMessageAsync(message.Chat, "Вас вітає Авто Ресурс Сервис!");
-                        //await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
-                        await botClient.SendTextMessageAsync(message.Chat, "Для перегляду усіх команд викоистовуйте: /help");
-                        //Http.User user = new Http.User(update.Message.From.FirstName, update.Message.From.LastName);
+                        var pic = Post.Send("Tires", "GetTiresImage", "/" + elem[i].Name + "/" + elem[i].TypeOfTire).Result;
+                        TiresImages tiresImages = JsonConvert.DeserializeObject<TiresImages>(pic);
 
-                        //string str = Post.Send("Users", "SaveTelegramUser", senddata).Result;
-                        return;
+                        MemoryStream ms = new MemoryStream(tiresImages.Image);
+                        InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
+                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН");
                     }
-                    if (message.Text.ToLower() == "ги" || message.Text.ToLower() == "гии")
+                    InlineKeyboardButton[] btn = new InlineKeyboardButton[0];
+                    btn[0] = InlineKeyboardButton.WithCallbackData("Хочете підібрати інші шини", "YesShowFilterTires");
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
+                    bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Хочете побачити іще шини?", replyMarkup: inlineKeyboard);
+                    
+
+                }
+            }
+
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(update));
+            var logString = Newtonsoft.Json.JsonConvert.SerializeObject(update);
+            FileStream fileStreamLog = new FileStream(@"BotFile.log", FileMode.Append);
+            if (update != null)
+            {
+                for (int i = 0; i < logString.Length; i++)
+                {
+                    byte[] array = Encoding.Default.GetBytes(logString.ToString());
+                    fileStreamLog.Write(array, 0, array.Length);
+                }
+            }
+            fileStreamLog.Close();
+            if (update.Message != null)
+            {
+                TelegramBotUser telegramBotUser = new TelegramBotUser();
+                telegramBotUser.idChat = update.Message.Chat.Id;
+                telegramBotUser.Name = update.Message.Chat.FirstName;
+                telegramBotUser.Login = update.Message.Chat.Username;
+                var sendTelegramUser = JsonConvert.SerializeObject(telegramBotUser);
+                Post.Send("Home", "SetBotUser", sendTelegramUser);
+            }
+            //await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
+
+
+            if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
+            {
+                var message = update.Message;
+                if (message.Text == null)
+                {
+                    return;
+                }
+                if (message.Text.ToLower() == "/start")
+                {
+                    await botClient.SendTextMessageAsync(message.Chat, "Привіт " + update.Message.From.FirstName + " " + message.From.LastName);
+                    await botClient.SendTextMessageAsync(message.Chat, "Вас вітає Авто Ресурс Сервис!");
+                    //await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
+                    await botClient.SendTextMessageAsync(message.Chat, "Для перегляду усіх команд викоистовуйте: /help");
+                    //Http.User user = new Http.User(update.Message.From.FirstName, update.Message.From.LastName);
+
+                    //string str = Post.Send("Users", "SaveTelegramUser", senddata).Result;
+                    return;
+                }
+                if (message.Text.ToLower() == "ги" || message.Text.ToLower() == "гии")
+                {
+                    await botClient.SendTextMessageAsync(message.Chat, "Луцк привет!!");
+                    return;
+                }
+
+                if (message.Text.ToLower() == "/registration")
+                {
+                    registarStart = true;
+                    User = new Http.User(message.From.FirstName, message.From.LastName, "", "");
+                    await botClient.SendTextMessageAsync(message.Chat, "Вас звати " + message.From.FirstName + " " + message.From.LastName);
+                    await botClient.SendTextMessageAsync(message.Chat, "Уведіть емейл");
+                    return;
+                }
+
+                if (registarStart == true)
+                {
+                    if (User.Email == "")
                     {
-                        await botClient.SendTextMessageAsync(message.Chat, "Луцк привет!!");
+                        User.Email = message.Text.ToLower();
+                        await botClient.SendTextMessageAsync(message.Chat, "Уведіть пароль");
                         return;
                     }
 
-                    if (message.Text.ToLower() == "/registration")
-                    {
-                        registarStart = true;
-                        User = new Http.User(message.From.FirstName, message.From.LastName, "", "");
-                        await botClient.SendTextMessageAsync(message.Chat, "Вас звати " + message.From.FirstName + " " + message.From.LastName);
-                        await botClient.SendTextMessageAsync(message.Chat, "Уведіть емейл");
-                        return;
-                    }
+                    //if (User.Email != "" && User.Password == "" && registarEnd == false)
+                    //{
+                    //    registarEnd = true;
 
-                    if (registarStart == true)
+                    //    return;
+                    //}
+
+                    if (User.Password == "")
                     {
-                        if (User.Email == "")
+                        User.Password = message.Text;
+                        if (User.Name != "" && User.Sername != "" && User.Password != "" && User.Email != "")
                         {
-                            User.Email = message.Text.ToLower();
-                            await botClient.SendTextMessageAsync(message.Chat, "Уведіть пароль");
-                            return;
-                        }
-
-                        //if (User.Email != "" && User.Password == "" && registarEnd == false)
-                        //{
-                        //    registarEnd = true;
-
-                        //    return;
-                        //}
-
-                        if (User.Password == "")
-                        {
-                            User.Password = message.Text;
-                            if (User.Name != "" && User.Sername != "" && User.Password != "" && User.Email != "")
+                            //User.Id = Convert.ToInt32(message.From.Id);
+                            var senddata = JsonConvert.SerializeObject(User);
+                            var sendresult = Post.Send("Users", "SaveTelegramUser", senddata).Result;
+                            registarStart = false;
+                            registarEnd = false;
+                            if (sendresult == "Good")
                             {
-                                //User.Id = Convert.ToInt32(message.From.Id);
-                                var senddata = JsonConvert.SerializeObject(User);
-                                var sendresult = Post.Send("Users", "SaveTelegramUser", senddata).Result;
-                                registarStart = false;
-                                registarEnd = false;
-                                if (sendresult == "Good")
-                                {
-                                    await botClient.SendTextMessageAsync(message.Chat, "Ви зареєстровані!");
-                                    return;
-                                }
-                                await botClient.SendTextMessageAsync(message.Chat, "Акаунт вже існує!");
+                                await botClient.SendTextMessageAsync(message.Chat, "Ви зареєстровані!");
                                 return;
-
                             }
+                            await botClient.SendTextMessageAsync(message.Chat, "Акаунт вже існує!");
                             return;
-                        }
-
-
-                    }
-
-
-                    if (message.Text.ToLower() == "/help")
-                    {
-                        await botClient.SendTextMessageAsync(message.Chat, "Список комманд");
-                        await botClient.SendTextMessageAsync(message.Chat, "/start - запуск \n /help - допомога \n /showalltires - показати усі товари на сайті \n /registration - регістрація");
-                        return;
-
-                    }
-
-                    if (message.Text.ToLower() == "/showalltires")
-                    {
-                        var str = Post.Send("Tires", "GetAllTires").Result;
-                        List<Tires> elem = JsonConvert.DeserializeObject<List<Tires>>(str);
-                        Console.WriteLine(elem);
-                        for (int i = 0; i < elem.Count; i++)
-                        {
-                            var pic = Post.Send("Tires", "GetTiresImage", "/" + elem[i].Name + "/" + elem[i].TypeOfTire).Result;
-                            TiresImages tiresImages = JsonConvert.DeserializeObject<TiresImages>(pic);
-
-                            MemoryStream ms = new MemoryStream(tiresImages.Image);
-                            InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
-                            await botClient.SendPhotoAsync(message.Chat, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН");
-                            //await botClient.SendTextMessageAsync(message.Chat, "Назва " + elem[i].Name+" /n" +"Вага " + elem[i].Width+ " /n" + "Висота "+elem[i].Height+ " /n");
-                            //await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Width);
-                            //await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Height);
-
 
                         }
                         return;
-
                     }
-                    if (message.Text.ToLower() == "да" || message.Text.ToLower() == "так")
-                    {
-                        string str = Post.Send("Tires", "GetBotTires").Result;
-                        if (str != "")
-                        {
-                            string[] brends = JsonConvert.DeserializeObject<string[]>(str);
-                            Console.WriteLine(str);
-                            for (int i = 0; i < brends.Length; i++)
-                            {
-                                await botClient.SendTextMessageAsync(message.Chat, "/" + brends[i]);
-                            }
 
-                            await botClient.SendTextMessageAsync(message.Chat, "Выберите бренд");
-                            return;
-                        }
 
-                    }
-                    else
-                    {
-                        await botClient.SendTextMessageAsync(message.Chat, "Виберите ширину");
-                        string strwidth = Post.Send("Tires", "GetBotWidth", message.Text).Result;
-                        if (strwidth != "")
-                        {
-                            string[] width = JsonConvert.DeserializeObject<string[]>(strwidth);
-                            for (int i = 0; i < width.Length; i++)
-                            {
-                                await botClient.SendTextMessageAsync(message.Chat, "/" + width[i]);
-                            }
-                        }
-                        return;
-                    }
                 }
+
+
+                if (message.Text.ToLower() == "/help")
+                {
+                    await botClient.SendTextMessageAsync(message.Chat, "Список комманд");
+                    await botClient.SendTextMessageAsync(message.Chat, "/start - запуск \n /help - допомога \n /showalltires - показати усі товари на сайті \n /registration - регістрація");
+                    return;
+
+                }
+
+                if (message.Text.ToLower() == "/showalltires")
+                {
+                    var str = Post.Send("Tires", "GetAllTires").Result;
+                    List<Tires> elem = JsonConvert.DeserializeObject<List<Tires>>(str);
+                    Console.WriteLine(elem);
+                    for (int i = 0; i < elem.Count; i++)
+                    {
+                        var pic = Post.Send("Tires", "GetTiresImage", "/" + elem[i].Name + "/" + elem[i].TypeOfTire).Result;
+                        TiresImages tiresImages = JsonConvert.DeserializeObject<TiresImages>(pic);
+
+                        MemoryStream ms = new MemoryStream(tiresImages.Image);
+                        InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
+                        await botClient.SendPhotoAsync(message.Chat, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН");
+                        //await botClient.SendTextMessageAsync(message.Chat, "Назва " + elem[i].Name+" /n" +"Вага " + elem[i].Width+ " /n" + "Висота "+elem[i].Height+ " /n");
+                        //await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Width);
+                        //await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Height);
+
+
+                    }
+                    return;
+
+                }
+                //if (message.Text.ToLower() == "да" || message.Text.ToLower() == "так")
+                //{
+                //    string str = Post.Send("Tires", "GetBotTires").Result;
+                //    if (str != "")
+                //    {
+                //        string[] brends = JsonConvert.DeserializeObject<string[]>(str);
+                //        Console.WriteLine(str);
+                //        for (int i = 0; i < brends.Length; i++)
+                //        {
+                //            await botClient.SendTextMessageAsync(message.Chat, "/" + brends[i]);
+                //        }
+
+                //        await botClient.SendTextMessageAsync(message.Chat, "Выберите бренд");
+                //        return;
+                //    }
+
+                //}
+                //else
+                //{
+                //    await botClient.SendTextMessageAsync(message.Chat, "Виберите ширину");
+                //    string strwidth = Post.Send("Tires", "GetBotWidth", message.Text).Result;
+                //    if (strwidth != "")
+                //    {
+                //        string[] width = JsonConvert.DeserializeObject<string[]>(strwidth);
+                //        for (int i = 0; i < width.Length; i++)
+                //        {
+                //            await botClient.SendTextMessageAsync(message.Chat, "/" + width[i]);
+                //        }
+                //    }
+                //    return;
+                //}
             }
         }
 
@@ -299,7 +383,7 @@ namespace ArsShina_Bot
                         
                     });
 
-                    bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хочете побачити нові колекції вантажних шин?" + " " +"@"+ telegramBotUsers[i].Login, replyMarkup: inlineKeyboard);
+                    bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хочете побачити нові колекції вантажних шин?" + " " + "@" + telegramBotUsers[i].Login, replyMarkup: inlineKeyboard);
                     if (telegramBotUsers[i].Login == "Dotnetsqlkukhar")
                     {
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Button тьфу");
@@ -325,6 +409,7 @@ namespace ArsShina_Bot
             Console.ReadLine();
 
         }
+
 
         private static ValueTask BotOnApiRequest(ITelegramBotClient botClient, ApiRequestEventArgs args, CancellationToken cancellationToken)
         {
