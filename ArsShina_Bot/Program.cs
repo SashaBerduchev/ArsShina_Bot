@@ -384,8 +384,8 @@ namespace ArsShina_Bot
                         // first row
                         new []
                         {
-                            InlineKeyboardButton.WithCallbackData("Так", "YesShowTires"),
-                            InlineKeyboardButton.WithCallbackData("Ні", "NotShowTires")
+                            InlineKeyboardButton.WithCallbackData("Показати всі", "YesShowTires"),
+                            InlineKeyboardButton.WithCallbackData("Відсортувати", "NotShowTires")
                         },
                         // second row
                         
