@@ -57,7 +57,11 @@ namespace ArsShina_Bot
 
                         MemoryStream ms = new MemoryStream(tiresImages.Image);
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
-                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН");
+                        string link = "https://www.arsshina.com/Tires/Details/" + elem[i].id;
+                        InlineKeyboardButton[] inlineKeyboardButton = new InlineKeyboardButton[1];
+                        inlineKeyboardButton[0] = InlineKeyboardButton.WithUrl("Придбати", link);
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButton });
+                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН", replyMarkup:inlineKeyboardMarkup);
                     }
                 }
                 if (callbackQuery.Data == "YesShowFilterTires")
@@ -151,7 +155,11 @@ namespace ArsShina_Bot
 
                         MemoryStream ms = new MemoryStream(tiresImages.Image);
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
-                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН");
+                        string link = "https://www.arsshina.com/Tires/Details/" + elem[i].id;
+                        InlineKeyboardButton[] inlineKeyboardButton = new InlineKeyboardButton[1];
+                        inlineKeyboardButton[0] = InlineKeyboardButton.WithUrl("Придбати", link);
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButton });
+                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН", replyMarkup:inlineKeyboardMarkup);
                     }
                     InlineKeyboardButton[] btn = new InlineKeyboardButton[2];
                     btn[0] = InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires");
@@ -207,6 +215,10 @@ namespace ArsShina_Bot
                     await botClient.SendTextMessageAsync(message.Chat, "Вас вітає Авто Ресурс Сервис!");
                     //await botClient.SendTextMessageAsync(message.Chat, "Хотите посмотреть каталог брендов?");
                     await botClient.SendTextMessageAsync(message.Chat, "Для перегляду усіх команд викоистовуйте: /help");
+                    InlineKeyboardButton[] inlineKeyboardButtons = new InlineKeyboardButton[1];
+                    inlineKeyboardButtons[0] = InlineKeyboardButton.WithUrl("АвтоРесурс Сервіс", "https://www.arsshina.com/");
+                    InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButtons });
+                    await botClient.SendTextMessageAsync(message.Chat, "Щоб перейти на сайт використовуйте посилання: ", replyMarkup: inlineKeyboardMarkup);
                     //Http.User user = new Http.User(update.Message.From.FirstName, update.Message.From.LastName);
 
                     //string str = Post.Send("Users", "SaveTelegramUser", senddata).Result;
@@ -289,10 +301,12 @@ namespace ArsShina_Bot
 
                         MemoryStream ms = new MemoryStream(tiresImages.Image);
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, tiresImages.ImageMimeTypeOfData);
-                        await botClient.SendPhotoAsync(message.Chat, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН");
-                        //await botClient.SendTextMessageAsync(message.Chat, "Назва " + elem[i].Name+" /n" +"Вага " + elem[i].Width+ " /n" + "Висота "+elem[i].Height+ " /n");
-                        //await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Width);
-                        //await botClient.SendTextMessageAsync(message.Chat, "/" + elem[i].Height);
+                        string link = "https://www.arsshina.com/Tires/Details/" + elem[i].id;
+                        InlineKeyboardButton[] inlineKeyboardButton = new InlineKeyboardButton[1];
+                        inlineKeyboardButton[0] = InlineKeyboardButton.WithUrl("Придбати", link);
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButton });
+                        await botClient.SendPhotoAsync(message.Chat, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Ціна: " + elem[i].Price + "ГРН", replyMarkup:inlineKeyboardMarkup);
+                       
 
 
                     }
