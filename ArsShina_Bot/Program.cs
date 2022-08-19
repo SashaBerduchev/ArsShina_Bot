@@ -61,7 +61,7 @@ namespace ArsShina_Bot
                         InlineKeyboardButton[] inlineKeyboardButton = new InlineKeyboardButton[1];
                         inlineKeyboardButton[0] = InlineKeyboardButton.WithUrl("Придбати", link);
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButton });
-                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Діаметр: " + elem[i].Radius + "\n" + "Призначення: " + elem[i].TypeOfTire + "\n" + "Ціна: " + elem[i].Price + "ГРН" , replyMarkup:inlineKeyboardMarkup);
+                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Діаметр: " + elem[i].Radius + "\n" + "Призначення: " + elem[i].TypeOfTire + "\n" + "Ціна: " + elem[i].Price + "ГРН", replyMarkup: inlineKeyboardMarkup);
                     }
                 }
                 if (callbackQuery.Data == "YesShowFilterTires")
@@ -159,7 +159,7 @@ namespace ArsShina_Bot
                         InlineKeyboardButton[] inlineKeyboardButton = new InlineKeyboardButton[1];
                         inlineKeyboardButton[0] = InlineKeyboardButton.WithUrl("Придбати", link);
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButton });
-                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Діаметр: " + elem[i].Radius + "\n" + "Призначення: " + elem[i].TypeOfTire + "\n" + "Ціна: " + elem[i].Price + "ГРН", replyMarkup:inlineKeyboardMarkup);
+                        await botClient.SendPhotoAsync(callbackQuery.Message.Chat.Id, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Діаметр: " + elem[i].Radius + "\n" + "Призначення: " + elem[i].TypeOfTire + "\n" + "Ціна: " + elem[i].Price + "ГРН", replyMarkup: inlineKeyboardMarkup);
                     }
                     InlineKeyboardButton[] btn = new InlineKeyboardButton[2];
                     btn[0] = InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires");
@@ -172,7 +172,7 @@ namespace ArsShina_Bot
                     haighttire = null;
                     rad = null;
                 }
-                if(callbackQuery.Data == "NoTires")
+                if (callbackQuery.Data == "NoTires")
                 {
                     bot.SendTextMessageAsync(callbackQuery.Message.Chat.Id, "Дякую");
                 }
@@ -305,8 +305,8 @@ namespace ArsShina_Bot
                         InlineKeyboardButton[] inlineKeyboardButton = new InlineKeyboardButton[1];
                         inlineKeyboardButton[0] = InlineKeyboardButton.WithUrl("Придбати", link);
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButton });
-                        await botClient.SendPhotoAsync(message.Chat, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Діаметр: " + elem[i].Radius + "\n" + "Призначення: " + elem[i].TypeOfTire + "\n" + "Ціна: " + elem[i].Price + "ГРН", replyMarkup:inlineKeyboardMarkup);
-                       
+                        await botClient.SendPhotoAsync(message.Chat, inputOnlineFile, "Назва: " + elem[i].Name + "\n" + "Ширина: " + elem[i].Width + "\n" + "Висота: " + elem[i].Height + "\n" + "Діаметр: " + elem[i].Radius + "\n" + "Призначення: " + elem[i].TypeOfTire + "\n" + "Ціна: " + elem[i].Price + "ГРН", replyMarkup: inlineKeyboardMarkup);
+
 
 
                     }
@@ -428,10 +428,28 @@ namespace ArsShina_Bot
                     SendNews();
                 }
             }
+            while (Console.ReadKey().Key == ConsoleKey.Spacebar)
+            {
+                {
+                    SendSite();
+                }
+            }
             Console.ReadLine();
 
         }
 
+        private static async void SendSite()
+        {
+            var result = Post.Send("Home", "GetBotUser").Result;
+            List<TelegramBotUser> telegramBotUsers = JsonConvert.DeserializeObject<List<TelegramBotUser>>(result);
+            for (int j = 0; j < telegramBotUsers.Count; j++)
+            {
+                InlineKeyboardButton[] inlineKeyboardButtons = new InlineKeyboardButton[1];
+                inlineKeyboardButtons[0] = InlineKeyboardButton.WithUrl("АвтоРесурс Сервіс", "https://www.arsshina.com/");
+                InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButtons });
+                await bot.SendTextMessageAsync(telegramBotUsers[j].idChat, "Не забувайте про наш сайт: ", replyMarkup: inlineKeyboardMarkup);
+            }
+        }
 
         private static ValueTask BotOnApiRequest(ITelegramBotClient botClient, ApiRequestEventArgs args, CancellationToken cancellationToken)
         {
@@ -467,22 +485,22 @@ namespace ArsShina_Bot
                         }
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, news[j].ImageMimeTypeOfData);
 
-                        var inlineKeyboard = new InlineKeyboardMarkup(new[]
-                    {
-                        // first row
-                        new []
-                        {
-                            InlineKeyboardButton.WithCallbackData("1.1", "11"),
-                            InlineKeyboardButton.WithCallbackData("1.2", "12"),
-                        },
-                        // second row
-                        new []
-                        {
-                            InlineKeyboardButton.WithCallbackData("2.1", "21"),
-                            InlineKeyboardButton.WithCallbackData("2.2", "22"),
-                        }
-                    });
-                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase + "\n\n" + news[j].NewsLinkSrc, replyMarkup: inlineKeyboard);
+                        //    var inlineKeyboard = new InlineKeyboardMarkup(new[]
+                        //{
+                        //    // first row
+                        //    new []
+                        //    {
+                        //        InlineKeyboardButton.WithCallbackData("1.1", "11"),
+                        //        InlineKeyboardButton.WithCallbackData("1.2", "12"),
+                        //    },
+                        //    // second row
+                        //    new []
+                        //    {
+                        //        InlineKeyboardButton.WithCallbackData("2.1", "21"),
+                        //        InlineKeyboardButton.WithCallbackData("2.2", "22"),
+                        //    }
+                        //});
+                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase + "\n\n" + news[j].NewsLinkSrc);
                     }
                 }
             }
