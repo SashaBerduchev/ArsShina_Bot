@@ -485,6 +485,10 @@ namespace ArsShina_Bot
                         }
                         InputOnlineFile inputOnlineFile = new InputOnlineFile(ms, news[j].ImageMimeTypeOfData);
 
+                        var linkstr = "https://www.arsshina.com/News/Details/" + news[j].id;
+
+                        InlineKeyboardButton[] inlineKeyboardButton = new InlineKeyboardButton[1];
+                        inlineKeyboardButton[0] = InlineKeyboardButton.WithUrl("Читати повністью", linkstr);
                         //    var inlineKeyboard = new InlineKeyboardMarkup(new[]
                         //{
                         //    // first row
@@ -500,8 +504,14 @@ namespace ArsShina_Bot
                         //        InlineKeyboardButton.WithCallbackData("2.2", "22"),
                         //    }
                         //});
-                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase + "\n\n" + news[j].NewsLinkSrc);
+                        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButton });
+                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase + "\n\n" + news[j].NewsLinkSrc, replyMarkup: inlineKeyboardMarkup);
+                        
                     }
+                    InlineKeyboardButton[] inlineKeyboardButtons = new InlineKeyboardButton[1];
+                    inlineKeyboardButtons[0] = InlineKeyboardButton.WithUrl("АвтоРесурс Сервіс", "https://www.arsshina.com/");
+                    InlineKeyboardMarkup inlineKeyboardMarkups = new InlineKeyboardMarkup(new[] { inlineKeyboardButtons });
+                    await bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Не забувайте про наш сайт: ", replyMarkup: inlineKeyboardMarkups);
                 }
             }
             catch (Exception exp)

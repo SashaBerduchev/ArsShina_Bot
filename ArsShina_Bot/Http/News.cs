@@ -6,6 +6,7 @@ namespace ArsShina_Bot.Http
 {
     class News
     {
+        public int id { get; set; }
         public string NameNews { get; set; }
         public string BaseInfo { get; set; }
         public string AllInfo { get; set; }
