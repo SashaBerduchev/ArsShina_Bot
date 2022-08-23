@@ -209,6 +209,12 @@ namespace ArsShina_Bot
                 {
                     return;
                 }
+                if(message.From.Username == "Dotnetsqlkukhar")
+                {
+                    bot.SendTextMessageAsync(message.Chat, "Button тьфу");
+                    bot.SendTextMessageAsync(message.Chat, "Виберіть ширину");
+                    bot.SendTextMessageAsync(message.Chat, "Покупай шину!!!!!!!");
+                }
                 if (message.Text.ToLower() == "/start")
                 {
                     await botClient.SendTextMessageAsync(message.Chat, "Привіт " + update.Message.From.FirstName + " " + message.From.LastName);
@@ -363,9 +369,7 @@ namespace ArsShina_Bot
                 receiverOptions,
                 cancellationToken
             );
-
-
-
+            Console.ReadKey();
         }
         static void Main(string[] args)
         {
@@ -377,6 +381,17 @@ namespace ArsShina_Bot
             {
                 AllowedUpdates = { }, // receive all update types
             };
+            if (System.IO.File.Exists("BotFile.log"))
+            {
+                try
+                {
+                    System.IO.File.Delete("BotFile.log");
+                }catch(Exception exp)
+                {
+                    Console.WriteLine(exp.ToString());
+                }
+            }
+
             bot.StartReceiving(
                 HandleUpdateAsync,
                 HandleErrorAsync,
@@ -384,15 +399,17 @@ namespace ArsShina_Bot
                 cancellationToken
 
             );
-
-
-
             try
             {
                 var result = Post.Send("Home", "GetBotUser").Result;
                 List<TelegramBotUser> telegramBotUsers = JsonConvert.DeserializeObject<List<TelegramBotUser>>(result);
                 for (int i = 0; i < telegramBotUsers.Count; i++)
                 {
+                    InlineKeyboardButton[] inlineKeyboardButtons = new InlineKeyboardButton[1];
+                    inlineKeyboardButtons[0] = InlineKeyboardButton.WithUrl("АвтоРесурс Сервіс", "https://www.arsshina.com/");
+                    InlineKeyboardMarkup inlineKeyboardMarkups = new InlineKeyboardMarkup(new[] { inlineKeyboardButtons });
+                    bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Не забувайте про наш сайт: ", replyMarkup: inlineKeyboardMarkups);
+
                     var inlineKeyboard = new InlineKeyboardMarkup(new[]
                     {
                         // first row
@@ -410,6 +427,7 @@ namespace ArsShina_Bot
                     {
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Button тьфу");
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Село і квіти за вікном");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Виберіть ширину");
                     }
                 }
 
@@ -419,6 +437,7 @@ namespace ArsShina_Bot
             catch (Exception exp)
             {
                 Console.WriteLine(exp.ToString());
+                
             }
 
 
