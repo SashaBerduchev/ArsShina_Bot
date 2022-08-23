@@ -484,6 +484,7 @@ namespace ArsShina_Bot
         {
             try
             {
+                Console.WriteLine("ВІдправка новин");
                 var result = Post.Send("Home", "GetBotUser").Result;
                 List<TelegramBotUser> telegramBotUsers = JsonConvert.DeserializeObject<List<TelegramBotUser>>(result);
                 for (int i = 0; i < telegramBotUsers.Count; i++)
@@ -531,6 +532,7 @@ namespace ArsShina_Bot
                     inlineKeyboardButtons[0] = InlineKeyboardButton.WithUrl("АвтоРесурс Сервіс", "https://www.arsshina.com/");
                     InlineKeyboardMarkup inlineKeyboardMarkups = new InlineKeyboardMarkup(new[] { inlineKeyboardButtons });
                     await bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Не забувайте про наш сайт: ", replyMarkup: inlineKeyboardMarkups);
+                    Console.WriteLine("ВІдправка завершилась");
                 }
             }
             catch (Exception exp)
