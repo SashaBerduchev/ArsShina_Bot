@@ -214,6 +214,13 @@ namespace ArsShina_Bot
                     bot.SendTextMessageAsync(message.Chat, "Button тьфу");
                     bot.SendTextMessageAsync(message.Chat, "Виберіть ширину");
                     bot.SendTextMessageAsync(message.Chat, "Покупай шину!!!!!!!");
+                    bot.SendTextMessageAsync(message.Chat, "Покупай шину в Жмеринці!!!!!!!");
+                    bot.SendTextMessageAsync(message.Chat, "Покупай шину в Фастові!!!!!!!");
+                    bot.SendTextMessageAsync(message.Chat, "Покупай шину в Шепетівці!!!!!!!");
+                    bot.SendTextMessageAsync(message.Chat, "Покупай шину в Котовську!!!!!!!");
+                    bot.SendTextMessageAsync(message.Chat, "Покупай шину в Смілі!!!!!!!");
+                    bot.SendTextMessageAsync(message.Chat, "Хаджибеївці, Задунаївці Батон тьфу Піксель кукуріку!!!!!!!");
+                    bot.SendTextMessageAsync(message.Chat, "Виберіть ширину");
                 }
                 if (message.Text.ToLower() == "/start")
                 {
@@ -427,6 +434,16 @@ namespace ArsShina_Bot
                     {
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Button тьфу");
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Село і квіти за вікном");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Виберіть ширину");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Button тьфу");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Виберіть ширину");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Покупай шину!!!!!!!");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Покупай шину в Жмеринці!!!!!!!");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Покупай шину в Фастові!!!!!!!");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Покупай шину в Шепетівці!!!!!!!");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Покупай шину в Котовську!!!!!!!");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Покупай шину в Смілі!!!!!!!");
+                        bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хаджибеївці, Задунаївці Батон тьфу Піксель кукуріку!!!!!!!");
                         bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Виберіть ширину");
                     }
                 }
