@@ -549,6 +549,11 @@ namespace ArsShina_Bot
                     inlineKeyboardButtons[0] = InlineKeyboardButton.WithUrl("АвтоРесурс Сервіс", "https://www.arsshina.com/");
                     InlineKeyboardMarkup inlineKeyboardMarkups = new InlineKeyboardMarkup(new[] { inlineKeyboardButtons });
                     await bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Не забувайте про наш сайт: ", replyMarkup: inlineKeyboardMarkups);
+                    InlineKeyboardButton[] btn = new InlineKeyboardButton[2];
+                    btn[0] = InlineKeyboardButton.WithCallbackData("Так", "YesShowFilterTires");
+                    btn[1] = InlineKeyboardButton.WithCallbackData("Ні", "NoTires");
+                    InlineKeyboardMarkup inlineKeyboard = new InlineKeyboardMarkup(new[] { btn });
+                    bot.SendTextMessageAsync(telegramBotUsers[i].idChat, "Хочете побачити іще шини?", replyMarkup: inlineKeyboard);
                     Console.WriteLine("ВІдправка завершилась");
                 }
             }
