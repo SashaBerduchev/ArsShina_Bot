@@ -542,7 +542,7 @@ namespace ArsShina_Bot
                         //    }
                         //});
                         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup(new[] { inlineKeyboardButton });
-                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase + "\n\n" + news[j].NewsLinkSrc, replyMarkup: inlineKeyboardMarkup);
+                        await bot.SendPhotoAsync(telegramBotUsers[i].idChat, inputOnlineFile, news[j].NameNews + "\n\n" + returnBase, replyMarkup: inlineKeyboardMarkup);
                         
                     }
                     InlineKeyboardButton[] inlineKeyboardButtons = new InlineKeyboardButton[1];

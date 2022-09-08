@@ -3,7 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <ApplicationIcon>Screenshot_3.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Screenshot_3.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Nancy" Version="2.0.0" />
